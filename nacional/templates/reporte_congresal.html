@@ -1,0 +1,80 @@
+{% extends "base_nacional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">REPORTE CONGRESAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    DETALLE
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table class="table table-striped">
+					        <thead>
+					            <tr>
+					                <th>PARTIDO</th>
+					                <th>NUM. 1</th>
+					                <th>NUM. 2</th>
+					                <th>NUM. 3</th>
+					                <th>NUM. 4</th>
+					                <th>NUM. 5</th>
+					                <th>NUM. 6</th>
+					                <th>NUM. 7</th>					                
+					            </tr>
+					        </thead>
+					        <tbody>
+					        {% for partido,votos in resultados.items %}
+					        	<tr>
+					        		<td>{{ partido }}</td>
+					        		{% for voto in votos %}
+					        			<td>{{ voto }}</td>		    
+									{% endfor %}	    					        		
+					            </tr>        
+					        {% endfor %}
+					            <tr>
+					                <td>
+					                    VOTOS EN BLANCO:
+					                </td>
+					                <td>
+					                    {{ total_vb.votos_blancos__sum }}
+					                </td>
+					            </tr>
+					            <tr>
+					                <td>
+					                    VOTOS NULOS:
+					                </td>
+					                <td>
+					                    {{ total_vn.votos_nulos__sum }}
+					                </td>
+					            </tr>
+					            <tr>
+					                <td>
+					                    VOTOS IMPUGNADOS:
+					                </td>
+					                <td>
+					                    {{ total_vi.votos_impugnados__sum }}
+					                </td>
+					            </tr>
+					            <tr>
+					                <td>
+					                    TOTAL VOTOS:
+					                </td>
+					                <td>
+					                    {{ total_votos }}
+					                </td>
+					            </tr>
+						    </tbody>
+						</table>
+						<a href="#">Exportar a Excel</a>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock cuerpo %}

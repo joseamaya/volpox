@@ -1,0 +1,88 @@
+{% extends "base_regional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">REPORTE PROVINCIAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    DETALLE
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table class="table table-striped">
+						        <tbhead>
+						            <tr>
+						                <th>PARTIDO</th>
+						                <th>PROVINCIA</th>
+						                <th>VOTACION</th>
+						                <th>DETALLE</th>
+						            </tr>
+						        </tbhead>
+						        <tbody>
+						        {% for votos_partido in votos_partidos %}
+						            <tr>
+						                <td>{{ votos_partido.partido }}</td>
+						                <td>{{ votos_partido.provincia }}</td>
+						                <td>{{ votos_partido.votos }}</td>
+						                <td>
+						                    <a class="btn btn-small" href="#">
+						                        <span class="glyphicon glyphicon-folder-open"></span>
+						                    </a>
+						                </td>
+						            </tr>        
+						        {% endfor %}
+						            <tr>
+						                <td>
+						                    VOTOS EN BLANCO:
+						                </td>
+						                <td>
+						                </td>
+						                <td>
+						                    {{ total_vb.votos_blancos_prov__sum }}
+						                </td>
+						            </tr>
+						            <tr>
+						                <td>
+						                    VOTOS NULOS:
+						                </td>
+						                <td>
+						                </td>
+						                <td>
+						                    {{ total_vn.votos_nulos_prov__sum }}
+						                </td>
+						            </tr>
+						            <tr>
+						                <td>
+						                    VOTOS IMPUGNADOS:
+						                </td>
+						                <td>
+						                </td>
+						                <td>
+						                    {{ total_vi.votos_impugnados_prov__sum }}
+						                </td>
+						            </tr>
+						            <tr>
+						                <td>
+						                    TOTAL VOTOS:
+						                </td>
+						                <td>
+						                </td>
+						                <td>
+						                    {{ total_votos }}
+						                </td>
+						            </tr>
+						    </tbody>
+						</table>
+						<a href="{% url 'actas:exportar_reporte_provincial' provincia %}">Exportar a Excel</a>
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock cuerpo %}

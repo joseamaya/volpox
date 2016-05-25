@@ -1,0 +1,81 @@
+{% extends "base_regional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">MESA REGIONAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    SELECCIONE LA MESA
+			</div>
+			<div class="panel-body">
+				<table class="table table-striped">
+				    <thead>
+				        <tr>
+				            <th>MESA</th>
+				            <th>V. VALIDOS PROV.</th>
+				            <th>V. VALIDOS DIST.</th>
+				            <th>V. BLANCOS PROV.</th>
+				            <th>V. BLANCOS DIST.</th>
+				            <th>V. NULOS PROV.</th>
+				            <th>V. NULOS DIST.</th>
+				            <th>V. IMPUG. PROV.</th>
+				            <th>V. IMPUG. DIST.</th>
+				            <th>TOTAL V. PROV.</th>
+				            <th>TOTAL V. DIST.</th>
+				            <th>VER</th>
+				            <th>EDITAR</th>
+				        </tr>
+				    </thead>
+				    <tbody>
+				    {% for acta in actas %}
+				        <tr>
+				            <td>{{ acta.mesa }}</td>
+				            <td>{{ acta.votos_validos_prov }}</td>
+				            <td>{{ acta.votos_validos_dis }}</td>
+				            <td>{{ acta.votos_blancos_prov }}</td>
+				            <td>{{ acta.votos_blancos_dis }}</td>
+				            <td>{{ acta.votos_nulos_prov }}</td>
+				            <td>{{ acta.votos_nulos_dis }}</td>
+				            <td>{{ acta.votos_impugnados_prov }}</td>
+				            <td>{{ acta.votos_impugnados_dis }}</td>
+				            <td>{{ acta.votos_emitidos_prov }}</td>
+				            <td>{{ acta.votos_emitidos_dis }}</td>
+				            <td>
+				                <a class="btn btn-small" href="{% url 'regional:detalle_acta_municipal' acta.pk %}">
+				                    <span class="glyphicon glyphicon-folder-open"></span>
+				                </a>
+				            </td>
+				            <td>
+				                <a class="btn btn-small" href="#">
+				                    <span class="glyphicon glyphicon-pencil"></span>
+				                </a>
+				            </td>
+				        </tr>        
+				    {% endfor %}
+				    </tbody>    
+				</table>
+				<a href="{% url 'regional:exportar_actas_municipales' %}">Exportar a Excel</a>
+				<hr>
+				<div>
+				    <span>
+				        {% if actas.has_previous %}
+				            <a href="?pagina={{ actas.previous_page_number }}">Anterior</a>
+				        {% endif %}
+				            <span>
+				            {{ actas.number }} de {{ actas.paginator.num_pages }}.
+				            </span>
+				        {% if actas.has_next %}
+				            <a href="?pagina={{ actas.next_page_number }}">Siguiente</a>
+				        {% endif %}
+				    </span>
+				</div>				
+			</div>					
+		</div>
+	</div>
+</div>
+
+{% endblock cuerpo %}

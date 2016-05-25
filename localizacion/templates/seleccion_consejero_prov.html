@@ -1,0 +1,77 @@
+{% extends "base_localizacion.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">CONSEJERO REGIONAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    SELECCIONE LA REGIÓN Y PROVINCIA
+			</div>
+			<div class="panel-body">
+				<form role="form" action="{% url 'localizacion:seleccion_prov_consejero' %}" method="post">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="regiones">Region: </label>
+						<select id="regiones" name="regiones" class="form-control">
+							<option>Elige una región</option>
+							{% for region in regiones %}
+								<option value="{{ region.id }}">{{ region.nombre }}</option>
+							{% endfor %}}
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="regiones">Provincia: </label>							 
+						<select id="provincias" name="provincias" class="form-control">
+							<option>Elige una provincia</option>
+						</select>
+					</div>			
+					<input class="btn" type="submit" value="Siguiente">								
+				</form>
+			</div>					
+		</div>
+	</div>
+</div>
+{% endblock cuerpo %}
+
+{% block js %}
+	<script>
+	$('#regiones').on('change',busquedaProvincias);
+	function busquedaProvincias(){
+		var region = $('#regiones').val();
+		$("#provincias").empty();
+		$("#provincias").append("<option>Elige una provincia</option>");
+		$.ajax({
+			data : {'region': region},
+			url : '{% url 'localizacion:busquedaProvincias' %}',
+			type : 'get',
+			success : function(data){
+				$.each(data, function(i,item){
+            		$("#provincias").append("<option value=\""+item.pk+"\">"+item.fields.nombre+"</option>");
+        		});
+			}
+		});
+	}
+
+	$('#provincias').on('change',busquedaDistritos);
+	function busquedaDistritos(){
+		var provincia = $('#provincias').val();
+		$("#distritos").empty();
+		$("#distritos").append("<option>Elige un distrito</option>");
+		$.ajax({
+			data : {'provincia': provincia},
+			url : '{% url 'localizacion:busquedaDistritos' %}',
+			type : 'get',
+			success : function(data){
+				$.each(data, function(i,item){
+            		$("#distritos").append("<option value=\""+item.pk+"\">"+item.fields.nombre+"</option>");
+        		});
+			}
+		});
+	}
+	
+	</script>
+{% endblock js %}

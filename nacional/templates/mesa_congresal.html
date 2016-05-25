@@ -1,0 +1,39 @@
+{% extends "base_nacional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">MESA NACIONAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    SELECCIONE LA MESA
+			</div>
+			<div class="panel-body">
+				<form role="form" action="#" method="post">			
+					{% csrf_token %}
+					<div class="form-group">
+						<label>Mesa:</label>
+						{{ form.mesas }}
+						<p class="help-block">Digite la mesa a procesar.</p>
+					</div>					
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock cuerpo %}
+
+{% block js %}
+<script>
+	var mesas = []
+	{% for mesa in mesas %}
+	mesas.push("{{ mesa.numero }}")
+	{% endfor %}
+	$(function() {
+		$("#id_mesas").autocomplete({source: mesas});
+	});
+</script>
+{% endblock js %}

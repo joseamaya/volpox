@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block menu %}
+<div class="navbar-default sidebar" role="navigation">
+   	<div class="sidebar-nav navbar-collapse">
+		<ul class="nav" id="side-menu">
+			<li>
+		        <a href="#"><i class="fa fa-wrench fa-lg"></i> Configuración<span class="fa arrow"></span></a>
+		        <ul class="nav nav-second-level">		            
+		        </ul>	                
+		    </li>			    
+		    <li>
+		        <a href="#"><i class="glyphicon glyphicon-sort"></i> Operaciones<span class="fa arrow"></span></a>
+		        <ul class="nav nav-second-level">
+					<li><a href="{% url 'regional:mesa_municipal' %}"> Actas Municipales</a></li>
+		            <li><a href="{% url 'regional:mesa_regional' %}"> Actas Regionales</a></li>
+				</ul>	                    
+		    </li>
+		    <li>
+		    	<a href="#"><i class="glyphicon glyphicon-stats"></i> Reportes<span class="fa arrow"></span></a>
+			    <ul class="nav nav-second-level">
+			    	<li><a href="{% url 'regional:actas_municipales' %}"> Actas Municipales</a></li>
+			    	<li><a href="{% url 'regional:actas_regionales' %}"> Actas Regionales</a></li>
+			    	<li><a href="{% url 'localizacion:seleccion_region' %}"> Presidente Regional</a></li>
+					<li><a href="{% url 'localizacion:seleccion_prov_consejero' %}"> Consejero Regional</a></li>
+					<li><a href="{% url 'localizacion:seleccion_provincia' %}"> Municipalidad Provincial</a></li>
+					<li><a href="{% url 'localizacion:seleccion_distrito' %}"> Municipalidad Distrital</a></li>
+				</ul>
+		    </li>
+    	</ul>	               
+	</div>                
+</div>
+
+{% endblock menu %}

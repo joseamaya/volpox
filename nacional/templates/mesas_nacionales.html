@@ -1,0 +1,94 @@
+{% extends "base_nacional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">MESAS</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    DETALLE
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<table id="mesas" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					        <thead>
+					            <tr>
+					                <th>MESA</th>
+					                <th>CENTRO VOTACION</th>
+					                <th>N ELEC.</th>
+					                <th>PRES</th>
+					                <th>CONGRES.</th>
+					                <th>PARLAND.</th>
+					                <th>ACCION</th>					                					                
+					            </tr>
+					        </thead>
+					        <tbody>
+					        {% for mesa in mesas %}
+					            <tr>
+					                <td>{{ mesa.numero }}</td>
+					                <td>{{ mesa.centro_votacion }}</td>
+					                <td>{{ mesa.total_electores  }}</td>
+					                {% if mesa.procesada_presidencial  %}
+					                    <td>PROCESADA</td>
+					                {% else %}
+					                    <td>SIN PROCESAR</td>
+					                {% endif %}                
+					                {% if mesa.procesada_congresal  %}
+					                    <td>PROCESADA</td>
+					                {% else %}
+					                    <td>SIN PROCESAR</td>
+					                {% endif %}
+					                {% if mesa.procesada_parlandino  %}
+					                    <td>PROCESADA</td>
+					                {% else %}
+					                    <td>SIN PROCESAR</td>
+					                {% endif %}	
+					               	<td>
+						                <a class="btn btn-small" href="#">
+						                    <span class="glyphicon glyphicon-folder-open"></span>
+						                </a>
+						            	<a class="btn btn-small" href="#">
+						                    <span class="glyphicon glyphicon-pencil"></span>
+						                </a>
+						            </td>				                
+					            </tr>        
+					        {% endfor %}
+					    	</tbody>
+						</table>						
+					</div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock cuerpo %}
+{% block js %}
+<script>
+$(document).ready(function() 
+{	
+    var table = $('#mesas').DataTable( {
+        "language": {
+        	url: "/static/localizacion/es_ES.json"
+        }
+    } );
+ 
+    $('#mesas tbody').on( 'click', 'tr', function() 
+    {
+    	if ($(this).hasClass('selected') ) 
+        {        	
+        	$(this).removeClass('selected');
+            
+        }
+        else 
+        {
+	        table.$('tr.selected').removeClass('selected');
+	        $(this).addClass('selected');                
+        }
+    }); 
+});
+</script>
+{% endblock js %}

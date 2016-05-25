@@ -1,0 +1,209 @@
+{% extends "base_regional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">ACTA ELECTORAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    MESA N°: {{ mesa.numero }}
+			</div>
+			<div class="panel-body">
+				<form role="form" action="{% url 'actas:acta_regional' mesa.numero %}" method="post">								
+					{% csrf_token %}
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-6">
+								CENTRO DE VOTACION: {{ mesa.centro_votacion }}
+							</div>
+							<div class="col-md-4">
+								TOTAL DE ELECTORES: {{ mesa.total_electores }}
+							</div>			
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								REGION: {{ region.nombre }}
+							</div>
+							<div class="col-md-4">
+								PROVINCIA: {{ provincia.nombre }}
+							</div>
+							<div class="col-md-4">
+								DISTRITO: {{ distrito.nombre }}
+							</div>			
+						</div>
+					</div>
+					<div class="row">
+						<table class="table table-striped">
+					        <thead>
+					            <tr>
+					                <th>PARTIDO</th>
+					                <th>PRESIDENTE Y VICEPRESIDENTE</th>
+					                <th>CONSEJERO</th>		                
+					            </tr>
+					        </thead>
+					        <tbody>
+								{% for detalle in detalles %}
+									<tr>
+						                <td>{{ detalle.partido }}</td>
+						               	{% if detalle.presidente%}
+						                	<td>
+						                		<input type="number" name="pres_{{ detalle.partido.pk }}" id="pres_{{ detalle.partido.pk }}" min="0" max="{{ mesa.total_electores }}" value="0" class="presidente"/>
+						                	</td>
+						                {% else %}
+						                	<td>
+						                		<input type="text" name="pres_{{ detalle.partido.pk }}" id="pres_{{ detalle.partido.pk }}" value="NO TIENE LISTA" readonly/>
+						                	</td>
+						                {% endif %}
+						                {% if detalle.consejero%}
+						                	<td>
+						                		<input type="number" name="cons_{{ detalle.partido.pk }}" id="cons_{{ detalle.partido.pk }}" min="0" max="{{ mesa.total_electores }}" value="0" class="consejero"/>
+						                	</td>
+						                {% else %}
+						                	<td>
+						                		<input type="text" name="cons_{{ detalle.partido.pk }}" id="cons_{{ detalle.partido.pk }}" value="NO TIENE LISTA" readonly/>
+						                	</td>
+						                {% endif %}			                		                
+						            </tr>
+								{% endfor %}
+									<tr>
+										<td>
+											VOTOS EN BLANCO:
+										</td>							
+										<td>
+											{{ form.voto_blanco_pres }}	
+										</td>											
+										<td>
+											{{ form.voto_blanco_cons }}	
+										</td>			   									
+									</tr>
+									<tr>
+										<td>
+											VOTOS NULOS:
+										</td>
+										<td>
+											{{ form.voto_nulo_pres }}	
+										</td>											
+										<td>
+											{{ form.voto_nulo_cons }}	
+										</td>			                
+									</tr>
+									<tr>
+										<td>
+											VOTOS IMPUGNADOS:
+										</td>
+										<td>
+											{{ form.voto_impugnado_pres }}	
+										</td>											
+										<td>
+											{{ form.voto_impugnado_cons }}	
+										</td>			                
+									</tr>
+									<tr>
+										<td>
+											TOTAL DE VOTOS EMITIDOS:
+										</td>
+										<td>
+											{{ form.voto_total_pres }}	
+										</td>											
+										<td>
+											{{ form.voto_total_cons }}	
+										</td>			                
+									</tr>								
+							</tbody>
+						</table>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+						<label>OBSERVACIONES:</label>	
+							{{ form.observaciones }}	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-4">					
+							<input class="btn btn-primary" type="submit" id="guardar" name="guardar" value="Guardar Acta">
+						</div>
+					</div>
+				</div>		
+				<div id="dialog" title="Error en el Total de Votos">
+					<p>Error, el total de votos no puede ser mayor que el número de votantes</p>
+				</div>	
+			</form>								
+		</div>
+	</div>
+</div>
+
+{% endblock cuerpo %}
+
+{% block js %}
+	<script>
+	
+	$('.presidente').on('keyup',validarNumeros);
+	$('.consejero').on('keyup',validarNumeros);
+
+	function validarNumeros(){
+		this.value = this.value.replace(/[^0-9]/g,'0');
+	}	
+
+	$('.presidente').on('change',totalPresidente);
+	function totalPresidente(){
+		var total_presidente = 0;
+		$(".presidente").each(function(){
+			total_presidente = total_presidente + eval($(this).val()); 
+		});
+		$("#id_voto_total_pres").val(total_presidente);
+	}
+
+	$('.consejero').on('change',totalConsejero);
+	function totalConsejero(){
+		var total_consejero = 0;
+		$(".consejero").each(function(){
+			total_consejero = total_consejero + eval($(this).val()); 
+		});
+		$("#id_voto_total_cons").val(total_consejero);
+	}
+	
+	$("#dialog").dialog({
+            autoOpen : false,
+            resizable : false,
+            width : 200,
+            height:200,
+            modal : true,
+            buttons: {
+                "Cerrar" : function(){
+                    $( this ).dialog( "close" );
+                }
+            },
+            close : function(ev, ui) {
+                return true;    
+            }
+        });
+
+	$('#guardar').on('mouseover',validarTotal);
+	$('#guardar').on('focus',validarTotal);
+	function validarTotal(){
+		var total_presidente=eval($("#id_voto_total_pres").val());
+		var total_consejero=eval($("#id_voto_total_cons").val());		
+		var total_electores = {{ mesa.total_electores }};
+		
+		if(total_presidente>total_electores)
+		{
+			$( "#dialog" ).dialog("open");
+		}
+		else
+		{
+			if(total_consejero>total_electores)
+			{
+				$( "#dialog" ).dialog("open");
+			}
+			else
+			{
+			
+			}
+		}
+	}
+
+	</script>
+{% endblock js %}

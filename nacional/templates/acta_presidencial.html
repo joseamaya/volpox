@@ -1,0 +1,168 @@
+{% extends "base_nacional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">ACTA ELECTORAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    MESA N°: {{ mesa.numero }}			    
+			</div>
+			<div class="panel-body">
+				<form role="form" action="{% url 'nacional:acta_presidencial' mesa.numero %}" method="post">								
+					{% csrf_token %}
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-6">
+								{{ form.mesa }}
+								CENTRO DE VOTACION: {{ mesa.centro_votacion }}
+							</div>
+							<div class="col-md-4">
+								TOTAL DE ELECTORES: {{ mesa.total_electores }}
+							</div>			
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								REGION: {{ mesa.centro_votacion.distrito.provincia.region.nombre }}
+							</div>
+							<div class="col-md-4">
+								PROVINCIA: {{ mesa.centro_votacion.distrito.provincia.nombre }}
+							</div>
+							<div class="col-md-4">
+								DISTRITO: {{ mesa.centro_votacion.distrito.nombre }}
+							</div>			
+						</div>
+					</div>
+					<div class="row">
+						<table class="table table-striped">
+					        <thead>
+					            <tr>
+					                <th>PARTIDO</th>
+					                <th>PRESIDENTE Y VICEPRESIDENTE</th>					                	                
+					            </tr>
+					        </thead>
+					        <tbody>
+								{% for detalle in detalles %}
+									<tr>
+						                <td>{{ detalle.partido }}</td>
+						               	{% if detalle.presidente%}
+						                	<td>
+						                		<input type="number" class="form-control presidente numerico" name="pres_{{ detalle.partido.pk }}" id="pres_{{ detalle.partido.pk }}" min="0" max="{{ mesa.total_electores }}" value="0"/>
+						                	</td>
+						                {% else %}
+						                	<td>
+						                		<input type="text" name="pres_{{ detalle.partido.pk }}" id="pres_{{ detalle.partido.pk }}" value="NO TIENE LISTA" readonly/>
+						                	</td>
+						                {% endif %}						                			                		                
+						            </tr>
+								{% endfor %}
+									<tr>
+										<td>
+											VOTOS EN BLANCO:
+										</td>							
+										<td>
+											{{ form.votos_blancos }}	
+										</td>													   									
+									</tr>
+									<tr>
+										<td>
+											VOTOS NULOS:
+										</td>
+										<td>
+											{{ form.votos_nulos }}	
+										</td>													                
+									</tr>
+									<tr>
+										<td>
+											VOTOS IMPUGNADOS:
+										</td>
+										<td>
+											{{ form.votos_impugnados }}	
+										</td>													                
+									</tr>
+									<tr>
+										<td>
+											TOTAL DE VOTOS EMITIDOS:
+										</td>
+										<td>
+											{{ form.votos_totales }}	
+										</td>													                
+									</tr>								
+							</tbody>
+						</table>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+						<label>OBSERVACIONES:</label>	
+							{{ form.observaciones }}	
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-4">					
+							<input class="btn btn-primary" type="submit" id="guardar" name="guardar" value="Guardar Acta">
+						</div>
+					</div>
+				</div>		
+				<div id="dialog" title="Error en el Total de Votos">
+					<p>Error, el total de votos no puede ser mayor que el número de votantes</p>
+				</div>	
+			</form>								
+		</div>
+	</div>
+</div>
+
+{% endblock cuerpo %}
+
+{% block js %}
+<script>	
+$(".numerico").keydown(validar_numeros);	
+
+$('.presidente').on('change',totalPresidente);
+
+function totalPresidente()
+{
+	var total_presidente = 0;
+	$(".presidente").each(function()
+	{
+		total_presidente = total_presidente + eval($(this).val()); 
+	});
+	
+	$("#id_votos_totales").val(total_presidente);
+}
+
+$("#dialog").dialog(
+{
+    autoOpen : false,
+    resizable : false,
+    width : 300,
+    height:200,
+    modal : true,
+    buttons: {
+        "Cerrar" : function(){
+            $( this ).dialog( "close" );
+        }
+    },
+    close : function(ev, ui) {
+        return true;    
+    }
+});
+
+$("form").submit(function(event) 
+{
+	var total_presidente=eval($("#id_votos_totales").val());
+	var total_electores = {{ mesa.total_electores }};
+	if(total_presidente>total_electores)
+	{
+		$( "#dialog" ).dialog("open");
+	}
+	else
+	{
+		return;
+	}
+	event.preventDefault();
+});
+</script>
+{% endblock js %}

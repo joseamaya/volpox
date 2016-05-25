@@ -1,0 +1,98 @@
+{% extends "base_regional.html" %}
+{% block cuerpo %}
+
+<legend>ACTA ELECTORAL</legend>		
+<div class="row-fluid">
+	<div class="span3">
+		MESA N°: {{ acta.mesa.numero }}
+	</div>
+	<div class="span3">
+		CENTRO DE VOTACION: {{ acta.mesa.centro_votacion }}
+	</div>
+	<div class="span3">
+		TOTAL DE ELECTORES: {{ acta.mesa.total_electores }}
+	</div>			
+</div>
+<div class="row-fluid">
+	<div class="span3">
+		DISTRITO: {{ acta.mesa.centro_votacion.distrito }}
+	</div>
+	<div class="span3">
+		PROVINCIA: {{ acta.mesa.centro_votacion.distrito.provincia }}
+	</div>
+	<div class="span3">
+		REGION: {{ acta.mesa.centro_votacion.distrito.provincia.region }}
+	</div>			
+</div>
+<div class="row-fluid">
+	<table class="table table-striped">
+        <tbhead>
+            <tr>
+                <th>PARTIDO</th>
+                <th>PROVINCIAL</th>
+                <th>DISTRITAL</th>		                
+            </tr>
+        </tbhead>
+        <tbody>
+			{% for detalle in detalles %}
+				<tr>
+	                <td>
+	                	{{ detalle.partido }}
+	                </td>
+	                <td>
+                		{{ detalle.votos_provincial }}
+                	</td>
+                  	<td>
+                		{{ detalle.votos_distrital }}
+                	</td>			                
+	            </tr>
+			{% endfor %}
+				<tr>
+					<td>
+	                	VOTOS EN BLANCO:
+	                </td>
+	                <td>
+	                	{{ acta.votos_blancos_prov }}
+	                </td>
+	                <td>
+	                	{{ acta.votos_blancos_dis }}
+	                </td>
+				</tr>
+				<tr>
+					<td>
+	                	VOTOS NULOS:
+	                </td>
+	                <td>
+	                	{{ acta.votos_nulos_prov }}
+	                </td>
+	                <td>
+	                	{{ acta.votos_nulos_dis }}
+	                </td>
+				</tr>
+				<tr>
+					<td>
+	                	VOTOS IMPUGNADOS:
+	                </td>
+	                <td>
+	                	{{ acta.votos_impugnados_prov }}
+	                </td>
+	                <td>
+	                	{{ acta.votos_impugnados_dis }}
+	                </td>
+				</tr>
+				<tr>
+					<td>
+	                	TOTAL DE VOTOS:
+	                </td>
+	                <td>
+	                	{{ acta.votos_emitidos_prov }}
+	                </td>
+	                <td>
+	                	{{ acta.votos_emitidos_dis }}
+	                </td>
+				</tr>
+
+		</tbody>
+	</table>
+</div>	
+{% endblock cuerpo %}

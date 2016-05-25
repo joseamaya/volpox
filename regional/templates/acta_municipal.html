@@ -1,0 +1,244 @@
+{% extends "base_regional.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">ACTA ELECTORAL</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    MESA N°: {{ mesa.numero }}
+			</div>
+			<div class="panel-body">
+				<form role="form" action="{% url 'regional:acta_municipal' mesa.numero %}" method="post">	
+					{% csrf_token %}
+					<div class="form-group">
+						<div class="row">
+							<div class="col-md-6">
+								CENTRO DE VOTACION: {{ mesa.centro_votacion }}
+							</div>
+							<div class="col-md-6">
+								TOTAL DE ELECTORES: {{ mesa.total_electores }}
+							</div>
+						</div>			
+						<div class="row">		
+							<div class="col-md-4">
+								REGION: {{ region.nombre }}
+							</div>
+							<div class="col-md-4">
+								PROVINCIA: {{ provincia.nombre }}
+							</div>
+							<div class="col-md-4">
+								DISTRITO: {{ distrito.nombre }}
+							</div>			
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<table class="table table-striped">
+						        <tbhead>
+						            <tr>
+						                <th>PARTIDO</th>
+						                <th>PROVINCIAL</th>
+						                <th>DISTRITAL</th>		                
+						            </tr>
+						        </tbhead>
+						        <tbody>
+									{% for detalle in detalles %}
+										<tr>
+							                <td>{{ detalle.partido }}</td>
+							               	{% if detalle.provincial%}
+							                	<td>
+							                		<input type="number" name="prov_{{ detalle.partido.pk }}" id="prov_{{ detalle.partido.pk }}" min="0" max="{{ mesa.total_electores }}" value="0" class="provincial"/>
+							                	</td>
+							                {% else %}
+							                	<td>
+							                		<input type="text" name="prov_{{ detalle.partido.pk }}" id="prov_{{ detalle.partido.pk }}" value="NO TIENE LISTA" readonly/>
+							                	</td>
+							                {% endif %}
+							                {% if detalle.distrital%}
+							                	<td>
+							                		<input type="number" name="dis_{{ detalle.partido.pk }}" id="dis_{{ detalle.partido.pk }}" min="0" max="{{ mesa.total_electores }}" value="0" class="distrital"/>
+							                	</td>
+							                {% else %}
+							                	<td>
+							                		<input type="text" name="dis_{{ detalle.partido.pk }}" id="dis_{{ detalle.partido.pk }}" value="NO TIENE LISTA" readonly/>
+							                	</td>
+							                {% endif %}			                		                
+							            </tr>
+									{% endfor %}
+										<tr>
+											<td>
+												VOTOS EN BLANCO:
+											</td>							
+											<td>
+												<input type="number" name="voto_blanco_prov" id="voto_blanco_prov" min="0" max="{{ mesa.total_electores }}" value="0" class="provincial"/>	
+											</td>
+											
+											{% if not distrito.capital_provincia %}
+							                	<td>
+													<input type="number" name="voto_blanco_dis" id="voto_blanco_dis" min="0" max="{{ mesa.total_electores }}" value="0" class="distrital"/>	
+												</td>
+							                {% else %}
+							                	<td>
+							                		<input type="number" name="voto_blanco_dis" id="voto_blanco_dis" disabled/>
+							                	</td>
+							                {% endif %}		
+											
+										</tr>
+										<tr>
+											<td>
+												VOTOS NULOS:
+											</td>
+											<td>
+												<input type="number" name="voto_nulo_prov" id="voto_nulo_prov" min="0" max="{{ mesa.total_electores }}" value="0" class="provincial"/>	
+											</td>
+											{% if not distrito.capital_provincia %}
+							                	<td>
+													<input type="number" name="voto_nulo_dis" id="voto_nulo_dis" min="0" max="{{ mesa.total_electores }}" value="0" class="distrital"/>	
+												</td>
+							                {% else %}
+							                	<td>
+							                		<input type="number" name="voto_nulo_dis" id="voto_nulo_dis" disabled/>
+							                	</td>
+							                {% endif %}
+										</tr>
+										<tr>
+											<td>
+												VOTOS IMPUGNADOS:
+											</td>
+											<td>
+												<input type="number" name="voto_impugnado_prov" id="voto_impugnado_prov" min="0" max="{{ mesa.total_electores }}" value="0" class="provincial"/>	
+											</td>
+											{% if not distrito.capital_provincia %}
+							                	<td>
+													<input type="number" name="voto_impugnado_dis" id="voto_impugnado_dis" min="0" max="{{ mesa.total_electores }}" value="0" class="distrital"/>	
+												</td>
+							                {% else %}
+							                	<td>
+							                		<input type="number" name="voto_impugnado_dis" id="voto_impugnado_dis" disabled/>
+							                	</td>
+							                {% endif %}
+										</tr>
+										<tr>
+											<td>
+												TOTAL DE VOTOS EMITIDOS:
+											</td>
+											<td>
+												<input type="number" name="voto_total_provincial" id="voto_total_provincial" value="0" readonly class="total"/>	
+											</td>
+											{% if not distrito.capital_provincia %}
+							                	<td>
+													<input type="number" name="voto_total_distrital" id="voto_total_distrital" value="0" readonly class="total"/>	
+												</td>
+							                {% else %}
+							                	<td>
+							                		<input type="number" name="voto_total_distrital" id="voto_total_distrital" disabled/>
+							                	</td>
+							                {% endif %}
+										</tr>										
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+						<label>OBSERVACIONES:</label>	
+							<textarea rows="4" cols="141" name="observaciones" id="observaciones"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-4">
+							<input class="btn btn-primary" type="submit" id="guardar" name="guardar" value="Guardar Acta">
+						</div>
+					</div>		
+					<div id="dialog" title="Error en el Total de Votos">
+						<p>Error, el total de votos no puede ser mayor que el número de votantes</p>
+					</div>	
+				</form>
+			</div>					
+		</div>
+	</div>
+</div>
+
+{% endblock cuerpo %}
+
+{% block js %}
+<script>
+	
+	$('.provincial').on('keyup',validarNumeros);
+	$('.distrital').on('keyup',validarNumeros);
+
+	function validarNumeros(){
+		this.value = this.value.replace(/[^0-9]/g,'');
+	}	
+
+	$('.provincial').on('change',totalProvincial);
+	function totalProvincial(){
+		var total_provincial = 0;
+		$(".provincial").each(function(){
+			total_provincial = total_provincial + eval($(this).val()); 
+		});
+		$("#voto_total_provincial").val(total_provincial);
+	}
+
+	$('.distrital').on('change',totalDistrital);
+	function totalDistrital(){
+		var total_distrital = 0;
+		$(".distrital").each(function(){
+			total_distrital = total_distrital + eval($(this).val()); 
+		});
+		$("#voto_total_distrital").val(total_distrital);
+	}	
+	
+	$("#dialog").dialog({
+            autoOpen : false,
+            resizable : false,
+            width : 200,
+            height:200,
+            modal : true,
+            buttons: {
+                "Cerrar" : function(){
+                    $( this ).dialog( "close" );
+                }
+            },
+            close : function(ev, ui) {
+                return true;    
+            }
+        });
+
+	$('#guardar').on('mouseover',validarTotal);
+	$('#guardar').on('focus',validarTotal);
+	function validarTotal(){
+		var total_provincial=eval($("#voto_total_provincial").val());		
+		var total_electores = {{ mesa.total_electores }};
+		if ($('#voto_total_distrital').is(':disabled')) 
+		{
+			var total_distrital=total_electores;	
+		}
+		else
+		{
+			var total_distrital=eval($("#voto_total_distrital").val());
+		}
+
+		if(total_provincial>total_electores)
+		{
+			$( "#dialog" ).dialog("open");
+		}
+		else
+		{
+			if(total_distrital>total_electores)
+			{
+				$( "#dialog" ).dialog("open");
+			}
+			else
+			{
+			
+			}
+		}
+	}
+
+</script>
+{% endblock js %}

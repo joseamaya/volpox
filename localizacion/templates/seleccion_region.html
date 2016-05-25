@@ -1,0 +1,42 @@
+{% extends "base_localizacion.html" %}
+{% block cuerpo %}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">RESULTADOS AL CONGRESO</h1>
+    </div>    
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    SELECCIONE LA REGION
+			</div>
+			<div class="panel-body">
+				<form role="form" action="{% url 'localizacion:seleccion_region' %}" method="post">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="mesas">Region: </label>
+						<select id="regiones" name="regiones" class="form-control">
+							<option>Elige una región</option>
+							{% for region in regiones %}
+								<option value="{{ region.id }}">{{ region.nombre }}</option>
+							{% endfor %}}
+						</select>
+					</div>
+			
+					<div class="span4">
+						<input class="btn" type="submit" value="Siguiente">
+					</div>			
+				</form>
+			</div>					
+		</div>
+	</div>
+</div>			
+
+{% endblock cuerpo %}
+{% block js %}
+	<script>
+	
+	
+	</script>
+{% endblock js %}
