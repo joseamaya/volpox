@@ -7,7 +7,8 @@ from regional.models import Mesa, DisenioActaRegional,\
     VotacionPresidenteRegional, VotacionConsejeroRegional, DisenioActaMunicipal,\
     DetalleDisenioActaMunicipal, ActaMunicipal, DetalleActaMunicipal,\
     VotacionProvincial, VotacionDistrital
-from regional.forms import FormularioMesa, FormularioActaRegional
+from regional.forms import FormularioMesa, FormularioActaRegional,\
+    FormularioActaMunicipal
 from django.views.generic.base import TemplateView
 from localizacion.models import CentroVotacion, Distrito, Provincia
 from django.core import serializers
@@ -137,24 +138,50 @@ class ProcesarActaRegional(FormView):
         self.mesa.save()
         return HttpResponseRedirect(reverse('localizacion:mesa_regional')) 
 
-def acta_municipal(request, numero):
-    mesa = Mesa.objects.get(numero=numero)
-    centro_votacion = mesa.centro_votacion
-    distrito = centro_votacion.distrito
-    provincia = distrito.provincia
-    region = provincia.region
-    try:
-        disenio_acta = DisenioActaMunicipal.objects.get(distrito=distrito)
-    except DisenioActaMunicipal.DoesNotExist:
-        return HttpResponseRedirect(reverse('admin:login'))
-    detalles = DetalleDisenioActaMunicipal.objects.filter(disenio_acta=disenio_acta).order_by('id')
+def ProcesarActaMunicipal(FormView):
+    template_name = "acta_municipal.html"
+    form_class = FormularioActaMunicipal
     
-    if request.method == 'POST':
+    def get(self, request, *args, **kwargs):
+        self.numero = kwargs['numero']
+        return super(ProcesarActaMunicipal, self).get(request, *args, **kwargs)
+    
+    def get_initial(self):
+        initial = super(ProcesarActaMunicipal, self).get_initial()
+        initial['mesa'] = self.numero
+        initial['votos_blancos'] = 0
+        initial['votos_nulos'] = 0
+        initial['votos_impugnados'] = 0
+        initial['votos_totales'] = 0
+        return initial 
+    
+    def get_context_data(self, **kwargs):
+        context = super(ProcesarActaMunicipal, self).get_context_data(**kwargs)
+        mesa = Mesa.objects.get(numero=self.numero)
+        centro_votacion = mesa.centro_votacion
+        distrito = centro_votacion.distrito
+        provincia = distrito.provincia
+        region = provincia.region
+        try:
+            disenio_acta = DisenioActaMunicipal.objects.get(distrito=distrito)
+            context['disenio_acta'] = disenio_acta
+            detalles = DetalleDisenioActaMunicipal.objects.filter(disenio_acta=disenio_acta).order_by('id')       
+            context['mesa'] = mesa
+            context['detalles'] = detalles
+            return context           
+        except DisenioActaMunicipal.DoesNotExist:
+            return HttpResponseRedirect(reverse('regional:mesa_presidencial'))
+    
+    def post(self, request, *args, **kwargs):
+        mesa = Mesa.objects.get(numero=request.POST['mesa'])
         votos_blancos_prov = request.POST['voto_blanco_prov']
         votos_nulos_prov = request.POST['voto_nulo_prov']
         votos_imp_prov = request.POST['voto_impugnado_prov']
         votos_tot_prov = request.POST['voto_total_provincial']
-        
+        centro_votacion = mesa.centro_votacion
+        distrito = centro_votacion.distrito
+        provincia = distrito.provincia
+        region = provincia.region
         if not distrito.capital_provincia:
             votos_blancos_dis = request.POST['voto_blanco_dis']
             votos_nulos_dis = request.POST['voto_nulo_dis']
@@ -165,7 +192,8 @@ def acta_municipal(request, numero):
             votos_nulos_dis = 0
             votos_imp_dis = 0
             votos_tot_dis = 0
-
+        disenio_acta = DisenioActaMunicipal.objects.get(distrito=distrito)
+        detalles = DetalleDisenioActaMunicipal.objects.filter(disenio_acta=disenio_acta).order_by('id') 
         acta = ActaMunicipal(mesa=mesa,votos_blancos_prov=votos_blancos_prov,votos_blancos_dis=votos_blancos_dis,
             votos_nulos_prov=votos_nulos_prov,votos_nulos_dis=votos_nulos_dis,
             votos_impugnados_prov=votos_imp_prov,votos_impugnados_dis=votos_imp_dis,
@@ -211,10 +239,6 @@ def acta_municipal(request, numero):
         mesa.procesada_municipal=True
         mesa.save()
         return HttpResponseRedirect(reverse('localizacion:mesa_municipal'))
-
-    context = {'distrito':distrito,'provincia':provincia,'region':region,'disenio_acta':disenio_acta,
-    'detalles':detalles,'mesa':mesa}
-    return render(request, 'acta_municipal.html', context)
 
 class BusquedaMesas(TemplateView):
 
