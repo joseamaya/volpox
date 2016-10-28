@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.views import logout
 from seguridad.views import Inicio, Login, CambiarPassword, CrearPermiso, CrearVista, ReportePermisos, ReporteVistas, BorrarPermiso, CrearPerfil, ReportePerfiles, CrearPermisoPerfil,ReportePermisosPerfil,CrearPerfilUsuario, BorrarPermisoPerfil, Permisos, PermisoDenegado,\
     ReporteUsuariosPerfil, ReporteUsuarios, ReportePerfilesUsuario, CrearOpcion,\
@@ -6,7 +6,7 @@ from seguridad.views import Inicio, Login, CambiarPassword, CrearPermiso, CrearV
     ReporteVistasOpcion, OpcionesAplicacion, ReporteAplicacionesPerfil
 from django.contrib.auth.decorators import login_required
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', Login.as_view(), name="login"),
     url(r'^inicio/$',login_required(Inicio.as_view()), name="inicio"),
     url(r'^permisos/$',login_required(Permisos.as_view()), name="permisos"),
@@ -34,4 +34,4 @@ urlpatterns = patterns('',
     url(r'^reporte_vistas_opcion/(?P<opcion>\d+)/$', login_required(ReporteVistasOpcion.as_view()), name="reporte_vistas_opcion"),
     url(r'^reporte_perfiles_usuario/(?P<usuario>\d+)/$', login_required(ReportePerfilesUsuario.as_view()), name="reporte_perfiles_usuario"),
     url(r'^crear_permiso_opcion/$', login_required(CrearPermisoOpcion.as_view()), name="crear_permiso_opcion"),        
-)
+]
