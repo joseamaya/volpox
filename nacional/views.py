@@ -177,7 +177,7 @@ class ProcesarActaCongresal(FormView):
                     vot_cong_tot = VotacionCongresalCandidato.objects.get(partido=detalle.partido,region=region)
                 except VotacionCongresalCandidato.DoesNotExist:
                     vot_cong_tot = VotacionCongresalCandidato(partido=detalle.partido,region=region)
-                vot_cong_tot.votos = vot_cong_tot.votos + int(votos_cong_total)
+                vot_cong_tot.votos += int(votos_cong_total)
                 vot_cong_tot.save()
             for i in range(1,8):
                 cong = "cong_"+str(detalle.partido.pk)+"_"+str(i)
