@@ -45,7 +45,7 @@ class VotacionDistrital(models.Model):
         return "%s - %s" % (self.partido, self.distrito)
     
 class ActaMunicipal(models.Model):
-    mesa = models.ForeignKey(Mesa, primary_key=True)
+    mesa = models.OneToOneField(Mesa, primary_key=True)
     votos_blancos_prov = models.IntegerField()
     votos_blancos_dis = models.IntegerField()
     votos_nulos_prov = models.IntegerField()
@@ -79,7 +79,7 @@ class DetalleActaMunicipal(models.Model):
         return self.acta.mesa.numero+" "+self.partido.nombre
 
 class ActaRegional(models.Model):
-    mesa = models.ForeignKey(Mesa, primary_key=True)
+    mesa = models.OneToOneField(Mesa, primary_key=True)
     votos_blancos_pres = models.IntegerField()
     votos_nulos_pres = models.IntegerField()
     votos_impugnados_pres = models.IntegerField()

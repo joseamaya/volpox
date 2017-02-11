@@ -48,7 +48,8 @@
 {% block js %}
 	<script>
 	$('#regiones').on('change',busquedaProvincias);
-	function busquedaProvincias(){
+	function busquedaProvincias()
+	{
 		var region = $('#regiones').val();
 		$("#provincias").empty();
 		$("#provincias").append("<option>Elige una provincia</option>");

@@ -17,7 +17,7 @@ class MesaNacional(models.Model):
 
 
 class ActaPresidencial(models.Model):
-    mesa = models.ForeignKey(MesaNacional, primary_key=True)
+    mesa = models.OneToOneField(MesaNacional, primary_key=True)
     votos_blancos = models.IntegerField()
     votos_nulos = models.IntegerField()
     votos_impugnados = models.IntegerField()
@@ -121,7 +121,7 @@ class DetalleDisenioActaCongresal(models.Model):
 
 
 class ActaCongresal(models.Model):
-    mesa = models.ForeignKey(MesaNacional, primary_key=True)
+    mesa = models.OneToOneField(MesaNacional, primary_key=True)
     votos_blancos = models.IntegerField()
     votos_nulos = models.IntegerField()
     votos_impugnados = models.IntegerField()
