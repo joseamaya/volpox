@@ -340,7 +340,6 @@ class ReporteVistasOpcion(Permiso, ListView):
     paginate_by = 15
     
     def get_queryset(self,*args,**kwargs):
-        print self.kwargs['opcion']
         opcion = Opcion.objects.get(pk=self.kwargs['opcion'])
         vistas = opcion.vistas.all()
         return vistas

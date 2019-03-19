@@ -83,7 +83,6 @@ class ProcesarActaPresidencial(FormView):
         for detalle in detalles:
             pres = "pres_"+str(detalle.partido.pk)
             votos_pres = self.request.POST[pres]
-            print votos_pres
             try:
                 detalle_acta = DetalleActaPresidencial.objects.get(acta=acta,partido=detalle.partido)
             except DetalleActaPresidencial.DoesNotExist:
